@@ -4,6 +4,7 @@ from app.repositories.search_repo import SearchRepository
 from sqlalchemy import text
 from app import models
 
+
 class SearchService:
     def __init__(self, db: Session):
         self.db = db
