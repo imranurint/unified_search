@@ -3,11 +3,17 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app import models
 from app.api.entity_schemas import (
-    UserCreate, ProductCreate, OrderCreate, CustomerCreate, MessageCreate, EntityCreateResponse
+    UserCreate, ProductCreate, OrderCreate, CustomerCreate, MessageCreate, EntityCreateResponse,
+    UserResponse, ProductResponse, OrderResponse, CustomerResponse, MessageResponse
 )
 from app.services.sync_service import SyncService
+from typing import List
 
 router = APIRouter(prefix="/entities", tags=["Entities"])
+
+@router.get("/users", response_model=List[UserResponse])
+def get_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()
 
 @router.post("/users", response_model=EntityCreateResponse)
 def create_user(data: UserCreate, db: Session = Depends(get_db)):
@@ -28,6 +34,10 @@ def create_user(data: UserCreate, db: Session = Depends(get_db)):
     )
     return {"id": user.id}
 
+@router.get("/products", response_model=List[ProductResponse])
+def get_products(db: Session = Depends(get_db)):
+    return db.query(models.Product).all()
+
 @router.post("/products", response_model=EntityCreateResponse)
 def create_product(data: ProductCreate, db: Session = Depends(get_db)):
     product = models.Product(name=data.name, description=data.description, price=data.price)
@@ -45,6 +55,10 @@ def create_product(data: ProductCreate, db: Session = Depends(get_db)):
     )
     return {"id": product.id}
 
+@router.get("/orders", response_model=List[OrderResponse])
+def get_orders(db: Session = Depends(get_db)):
+    return db.query(models.Order).all()
+
 @router.post("/orders", response_model=EntityCreateResponse)
 def create_order(data: OrderCreate, db: Session = Depends(get_db)):
     order = models.Order(order_number=data.order_number, status=data.status)
@@ -61,6 +75,10 @@ def create_order(data: OrderCreate, db: Session = Depends(get_db)):
     )
     return {"id": order.id}
 
+@router.get("/customers", response_model=List[CustomerResponse])
+def get_customers(db: Session = Depends(get_db)):
+    return db.query(models.Customer).all()
+
 @router.post("/customers", response_model=EntityCreateResponse)
 def create_customer(data: CustomerCreate, db: Session = Depends(get_db)):
     customer = models.Customer(company_name=data.company_name, contact_email=data.contact_email)
@@ -76,6 +94,10 @@ def create_customer(data: CustomerCreate, db: Session = Depends(get_db)):
         description=customer.contact_email
     )
     return {"id": customer.id}
+
+@router.get("/messages", response_model=List[MessageResponse])
+def get_messages(db: Session = Depends(get_db)):
+    return db.query(models.Message).all()
 
 @router.post("/messages", response_model=EntityCreateResponse)
 def create_message(data: MessageCreate, db: Session = Depends(get_db)):
